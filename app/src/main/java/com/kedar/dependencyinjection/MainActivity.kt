@@ -1,18 +1,20 @@
 package com.kedar.dependencyinjection
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.kedar.dependencyinjection.model.Bike
-import com.kedar.dependencyinjection.model.Car
-import com.kedar.dependencyinjection.model.Cycle
-import com.kedar.dependencyinjection.model.Truck
-import javax.inject.Inject
+import com.google.gson.GsonBuilder
+import com.squareup.picasso.OkHttp3Downloader
+import com.squareup.picasso.Picasso
+import okhttp3.Cache
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
+import java.util.logging.Logger
+
 
 class MainActivity : AppCompatActivity() {
-    @Inject lateinit var car:Car
-    @Inject lateinit var bike: Bike
-    @Inject lateinit var cycle:Cycle
-    @Inject lateinit var truck: Truck
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,9 +22,29 @@ class MainActivity : AppCompatActivity() {
 
         val appComponent = (application as MyApplication).appComponent
         appComponent.inject(this)
-//        val vehicle = appComponent.getCar()
-//        val bike = appComponent.getBike()
-//        val cycle = appComponent.getCycle()
-//        val truck = appComponent.getTruck()
+
+        val gsonBuilder = GsonBuilder()
+        val gson = gsonBuilder.create()
+
+        val cacheFile = File(this.cacheDir, "NetworkCache")
+        cacheFile.mkdirs()
+
+        val cache = Cache(cacheFile, 25 * 1000 * 1000)
+
+
+        val okHttpClient = OkHttpClient()
+            .newBuilder()
+            .cache(cache)
+            .build()
+
+        val okHttpDownloader = OkHttp3Downloader(okHttpClient)
+
+        val picasso = Picasso.Builder(this).downloader(okHttpDownloader).build()
+
+        val retrofit = Retrofit.Builder()
+            .client(okHttpClient)
+            .baseUrl("https://randomuser.me/")
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
     }
 }

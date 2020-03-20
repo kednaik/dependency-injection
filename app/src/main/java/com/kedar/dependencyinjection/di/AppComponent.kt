@@ -3,12 +3,7 @@ package com.kedar.dependencyinjection.di
 import com.kedar.dependencyinjection.MainActivity
 import dagger.Component
 
-@Component
+@Component(modules = [PicassoModule::class])
 interface AppComponent {
     fun inject(mainActivity: MainActivity)
-
-//    fun getCar():Car
-//    fun getBike():Bike
-//    fun getCycle():Cycle
-//    fun getTruck(): Truck
 }
