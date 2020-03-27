@@ -10,7 +10,7 @@ import okhttp3.OkHttpClient
 @Module(includes = [NetworkModule::class])
 class PicassoModule {
     @Provides
-    fun http3Downloadre(okHttpClient: OkHttpClient):OkHttp3Downloader{
+    fun http3Downloader(okHttpClient: OkHttpClient):OkHttp3Downloader{
         return OkHttp3Downloader(okHttpClient)
     }
     @Provides
